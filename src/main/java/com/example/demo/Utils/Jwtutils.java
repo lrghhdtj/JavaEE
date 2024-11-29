@@ -11,7 +11,7 @@ import java.util.Date;
 import java.util.Map;
 
 public class Jwtutils {
-    private static String signKey = "hzrshiwoer".repeat(8);
+    private static String signKey = "JavaEE".repeat(8);
     private static Long expire = 43200000L;
 
     /**

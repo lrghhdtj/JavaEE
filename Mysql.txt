@@ -1,0 +1,115 @@
+
+create table User(
+    id int primary key auto_increment,
+    username varchar(20) not null ,
+    password varchar(20) not null ,
+    telephone varchar(13),
+    email varchar(15)，
+    governor int default 0；
+);
+#书籍表
+create table Boooks(
+    id int primary key auto_increment,
+    BookName varchar(25),
+    Author varchar(15),
+    Category varchar(15),
+    Publisher varchar(20),
+    ISBN varchar(12),
+    Price double,
+    Stock int,
+    Score double default 0,
+    PublishDate datetime
+);
+#借记表
+create table Borrow(
+    id int primary key auto_increment,
+    userid int,
+    bookid int,
+    BookName varchar(25),
+    initialtime datetime,
+    deadline datetime,
+    CONSTRAINT `fk_borrow_userid`  FOREIGN KEY(userid) REFERENCES User(id),
+    CONSTRAINT `fk_borrow_bookid` FOREIGN KEY(bookid) REFERENCES Book(id)
+);
+
+#触发器，借阅书籍自动减少书籍表中相关书籍的库存
+DELIMITER $$
+create trigger trigger_insert_borrow after insert on borrow for each row
+begin
+    update book set Stock = Stock-1 where book.id = NEW.bookid;
+end;
+DELIMITER ;
+
+#触发器，归还书籍自动增加书籍表中相关书籍的库存
+DELIMITER $$
+create trigger trigger_delete_borrow after delete on borrow for each row
+begin
+    update book set Stock = Stock+1 where book.id = OLD.bookid;
+end;
+DELIMITER ;
+#评论表
+create table Comment(
+    id int primary key auto_increment,
+    username varchar(20),
+    bookname varchar(25),
+    comment text not null ,
+    goal int not null ,
+    createtime datetime,
+    userid int,
+    bookid int,
+    CONSTRAINT `fk_comment_userid`  FOREIGN KEY(userid) REFERENCES User(id),
+    CONSTRAINT `fk_comment_bookid` FOREIGN KEY(bookid) REFERENCES Book(id));
+
+#新增评论触发器,自动修改书籍表中评分
+DELIMITER $$
+create trigger trigger_inster_comment after insert on comment for each row
+begin
+    declare num int;
+    declare s float;
+    set num = (select count(*) from comment where bookid = NEW.bookid);
+    if(num > 1) then
+        begin
+    set s = (select score from book where book.id = NEW.bookid);
+    update book set score = ( s * num + NEW.goal)/(num)  where book.id = NEW.bookid;
+        end;
+    end if;
+    if (num = 1) then
+        begin
+            update book set score = NEW.goal where book.id = NEW.bookid;
+        end;
+    end if;
+end;
+DELIMITER ;
+
+#删除评论触发器,自动修改书籍表中评分
+DELIMITER $$
+create trigger trigger_delete_comment after delete on comment for each row
+begin
+    declare num int ;
+    declare s float;
+    set num = (select count(*) from comment where bookid = OLD.bookid);
+    if (num > 0) then
+        begin
+            set s = (select score from book where book.id = OLD.bookid);
+            update book set score = (s * num - OLD.goal)/(num-1)  where book.id = OLD.bookid;
+        end;
+    end if;
+    if (num = 0) then
+        begin
+            update book set score = 0 where book.id = OLD.bookid;
+        end;
+    end if;
+end;
+DELIMITER ;
+
+
+create table Collection(
+    id int primary key auto_increment,
+    username varchar(20) ,
+    bookname varchar(25),
+    userid int,
+    bookid int,
+    CONSTRAINT `fk_collection_userid`  FOREIGN KEY(userid) REFERENCES User(id),
+    CONSTRAINT `fk_collection_bookid` FOREIGN KEY(bookid) REFERENCES Book(id)
+);
+

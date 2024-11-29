@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Result {
     private Integer code;
-    private String message;
+    private Object message;
     private Object data;
     public static Result success(){
         return new Result(1,"success",null);
@@ -19,6 +19,9 @@ public class Result {
     }
     public static Result success(Object data){
         return new Result(1,"success",data);
+    }
+    public static Result success(Object data,Object message){
+        return new Result(1,data,message);
     }
     public static Result error(String message){
         return new Result(0,message,null);

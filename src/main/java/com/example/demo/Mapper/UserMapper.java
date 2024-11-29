@@ -1,25 +1,24 @@
 package com.example.demo.Mapper;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.example.demo.Pojo.User;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
+import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
+@Repository
 @Mapper
-public interface UserMapper extends BaseMapper<User> {
-    @Select("select * from web.user where username = #{username}")
+public interface UserMapper  {
+    @Select("select * from User where username = #{username}")
     User getUser(String username);
 
-    @Insert("insert into web.user(username,password) values (#{username},#{password})")
-    void insertuser(String username, String password);
+    @Insert("insert into User (username,password,telephone,email) values (#{username},#{password},#{telephone},#{email})")
+    void insertuser(String username, String password, String telephone, String email);
 
-    @Update("update web.user set password = #{newpassword} where username = #{username}")
-    void change(String username,String newpassword);
+    @Update("update User set password = #{newpassword} where username = #{username}")
+    void change_password(String username,String newpassword);
 
-    @Select("select id from user where username = #{username}")
+    @Select("select id from User where username = #{username}")
     Integer getUserid(String username);
 }

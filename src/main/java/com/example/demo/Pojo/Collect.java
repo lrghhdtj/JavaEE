@@ -7,11 +7,10 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class User {
+public class Collect {
     private int id;
     private String username;
-    private String password;
-    private String telephone;
-    private String email;
-    private int governor;//0:普通用户，1管理员
+    private String bookname;//书名
+    private int userid;
+    private int bookid;
 }
