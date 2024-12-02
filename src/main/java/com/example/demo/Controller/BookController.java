@@ -26,7 +26,7 @@ public class BookController {
        PageBean pageBean = bookService.page(page, pageSize);
         return Result.success(pageBean);
     }
-    //模拟查询
+    //模糊查询，没加分页
     @GetMapping("/search")
     public Result search(@RequestParam String similar_name)
     {
